@@ -17,13 +17,13 @@ router.post('/login', (req, res) => {
         else {
 
             // 使用uuid生成token 写回数据库
-            let login_token = uuidv4();
-            let update_token_sql = 'UPDATE `admin` SET `token` = ? WHERE `id` = ?'
-            db.query(update_token_sql, [login_token, results[0].id])
+            let loginToken = uuidv4();
+            let updateTokenSql = 'UPDATE `admin` SET `token` = ? WHERE `id` = ?'
+            db.query(updateTokenSql, [loginToken, results[0].id])
 
             // admin 信息发给前端 无password 带token
             let admin_info = results[0]
-            admin_info.token = login_token
+            admin_info.token = loginToken
             admin_info.password = ''
 
             res.send({

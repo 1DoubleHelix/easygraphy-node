@@ -1,9 +1,7 @@
 // 导入
 const mysql = require('mysql')
-// 雪花ID
-const GenId = require('../utils/SnowFlake')
 
-// 建立连接
+// 建立数据库连接
 const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -12,6 +10,4 @@ const db = mysql.createPool({
     multipleStatements: true //支持多条 sql 语句
 })
 
-const genid = new GenId({workerId: 1})
-
-module.exports = dbUtils
+module.exports = db

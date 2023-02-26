@@ -7,8 +7,8 @@ const genid = require('../db/genid');
 router.get('/list', (req, res) => {
 
     // 查询全部tag
-    const search_sql = 'SELECT * FROM tag'
-    db.query(search_sql, [], (err, results) => {
+    const searchSql = 'SELECT * FROM tag'
+    db.query(searchSql, [], (err, results) => {
         // 报错
         if (err) {
             res.send({
@@ -34,8 +34,8 @@ router.delete('/delete', (req, res) => {
 
     // 删除tag 使用 /tag/delete?id=xxx
     let id = req.query.id
-    const delete_sql = 'DELETE FROM tag WHERE `id` = ?'
-    db.query(delete_sql, [id], (err, results) => {
+    const deleteSql = 'DELETE FROM tag WHERE `id` = ?'
+    db.query(deleteSql, [id], (err, results) => {
         // 报错
         if (err) {
             res.send({
@@ -60,8 +60,8 @@ router.put('/update', (req, res) => {
 
     // 修改tag
     let {id, name} = req.body
-    const update_sql = 'UPDATE `tag` SET `name` = ? WHERE `id` = ?'
-    db.query(update_sql, [name, id], (err, results) => {
+    const updateSql = 'UPDATE `tag` SET `name` = ? WHERE `id` = ?'
+    db.query(updateSql, [name, id], (err, results) => {
         // 报错
         if (err) {
             res.send({
@@ -86,8 +86,8 @@ router.post('/add', (req, res) => {
 
     // 新增tag
     let {name} = req.body
-    const insert_sql = 'INSERT INTO `tag` (`id`, `name`) VALUES (?, ?)'
-    db.query(insert_sql, [genid.NextId(), name], (err, results) => {
+    const insertSql = 'INSERT INTO `tag` (`id`, `name`) VALUES (?, ?)'
+    db.query(insertSql, [genid.NextId(), name], (err, results) => {
         // 报错
         if (err) {
             res.send({

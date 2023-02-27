@@ -56,6 +56,28 @@ router.delete('/delete', (req, res) => {
 // 修改tag
 router.put('/update', (req, res) => {
 
+    // 验证token
+    // let {token} = req.headers
+    // if (token == null) {
+    //     res.send({
+    //         code: 403,
+    //         msg: "请先登录"
+    //     })
+    //     return
+    // }
+
+    // 检查数据库的token是否一致
+    // let adminTokenSql = "SELECT * FROM admin WHERE token = ? "
+    // db.query(adminTokenSql, [token], (err, results) => {
+    //     if (err != null || results.length === 0) {
+    //         res.send({
+    //             code: 403,
+    //             msg: "请先登录"
+    //         })
+    //     }
+    // })
+
+
     // 查询tag是否已存在 （待实现）
 
     // 修改tag

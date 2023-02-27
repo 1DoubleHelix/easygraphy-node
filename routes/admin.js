@@ -5,9 +5,9 @@ const db = require('../db/db');
 
 router.post('/login', (req, res) => {
     let {account, password} = req.body
-    let out = db.query('SELECT * FROM admin WHERE account = ? AND PASSWORD = ?', [account, password], (err, results) => {
+    db.query('SELECT * FROM admin WHERE account = ? AND PASSWORD = ?', [account, password], (err, results) => {
         // 报错
-        if (err) {
+        if (!err && results.length === 0) {
             res.send({
                 code: 500,
                 msg: '登录失败'
@@ -15,7 +15,6 @@ router.post('/login', (req, res) => {
         }
         // 成功
         else {
-
             // 使用uuid生成token 写回数据库
             let loginToken = uuidv4();
             let updateTokenSql = 'UPDATE `admin` SET `token` = ? WHERE `id` = ?'
@@ -32,7 +31,7 @@ router.post('/login', (req, res) => {
                 data: admin_info,
             })
         }
-    })
+    });
 })
 
 module.exports = router

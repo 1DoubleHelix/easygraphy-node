@@ -114,7 +114,7 @@ router.get('/search', (req, res) => {
 
     // 判断标题
     if (keyword !== '') {
-        whereSql.push(' `title` LIKE = ? OR `content` LIKE ? ')
+        whereSql.push(' (`title` LIKE ? OR `content` LIKE ?) ')
         params.push('%' + keyword + '%')
         params.push('%' + keyword + '%')
     }
@@ -162,7 +162,7 @@ router.get('/search', (req, res) => {
                     page,
                     pageSize,
                     rows: results[0],
-                    count: results[1]
+                    count: results[1][0].count
                 }
             })
         }

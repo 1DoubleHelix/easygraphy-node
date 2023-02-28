@@ -3,6 +3,29 @@ const router = express.Router()
 const db = require('../db/db');
 const genid = require('../db/genid');
 
+// 获取单篇文章
+router.get("/detail", (req, res) => {
+    let { id } = req.query
+    let detailSql = "SELECT * FROM blog WHERE id = ? "
+    db.query(detailSql, [id], (err, results) => {
+        // 报错
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '获取文章失败'
+            })
+        }
+        // 成功
+        else {
+            res.send({
+                code: 200,
+                msg: '获取文章成功',
+                results: results[0]
+            })
+        }
+    })
+})
+
 // 添加博客
 router.post('/add', (req, res) => {
     let { title, tagId, content } = req.body
@@ -127,7 +150,9 @@ router.get('/search', (req, res) => {
     }
 
     // 拼接 Sql 查询分页
-    let searchSql = ' SELECT * FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
+    // let searchSql = ' SELECT * FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
+    // 超长内容裁剪 取前50个字符
+    let searchSql = ' SELECT id, tag_id, title, LEFT(content,50) AS content, create_time FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
     let searchSqlParams = params.concat([(page - 1) * pageSize, pageSize])
 
     // 拼接 Sql 查询数据总数
@@ -141,7 +166,7 @@ router.get('/search', (req, res) => {
     db.query(searchSql + ';' + searchCountSql, searchSqlParams.concat(searchCountSqlParams), (err, results) => {
 
         // console.log(searchSqlParams.concat(searchCountSqlParams));
-        // console.log(results);
+        // console.log(err);
 
         // 报错
         if (err) {

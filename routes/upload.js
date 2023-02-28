@@ -25,17 +25,17 @@ router.post("/rich_editor_upload", (req, res) => {
         fs.renameSync(process.cwd() + '/public/upload/temp/' + file.filename,
             process.cwd() + '/public/upload/' + fileName
         )
-        retFiles.push('/upload' + fileName)
+        retFiles.push('/upload/' + fileName)
     }
 
     res.send({
-            "errno": 0, // 注意：值是数字，不能是字符串
-            "data": {
-                "url": retFiles[0], // 图片 src ，必须
-                // "alt": "yyy", // 图片描述文字，非必须
-                // "href": "zzz" // 图片的链接，非必须
-            }
+        "errno": 0, // 注意：值是数字，不能是字符串
+        "data": {
+            "url": retFiles[0], // 图片 src ，必须
+            // "alt": "yyy", // 图片描述文字，非必须
+            // "href": "zzz" // 图片的链接，非必须
         }
+    }
     )
 })
 

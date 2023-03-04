@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const fs = require('fs')
-const genid = require('../db/genid');
+const genid = require('../../config/genid');
 
 router.post("/rich_editor_upload", (req, res) => {
     if (!req.files) {
@@ -28,6 +28,7 @@ router.post("/rich_editor_upload", (req, res) => {
         retFiles.push('/upload/' + fileName)
     }
 
+    // WangEditor 的 API
     res.send({
         "errno": 0, // 注意：值是数字，不能是字符串
         "data": {

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../db/db');
-const genid = require('../db/genid');
+const db = require('../config/db');
+const genid = require('../config/genid');
 
 router.get("/test", (req, res) => {
     // 测试数据库

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../db/db');
-const genid = require('../db/genid');
+const db = require('../config/db');
+const genid = require('../config/genid');
 
 // 获取单篇文章
 router.get("/detail", (req, res) => {
@@ -115,7 +115,7 @@ router.get('/search', (req, res) => {
     // 拿到前端数据先做判断
     let { keyword, tagId, page, pageSize } = req.query
 
-    // GET 方式接收为字符串 需要转换为Int 否则数据库查询出错
+    // GET 方式接收为字符串 数字需要转换为Int 否则数据库查询出错
 
     // 默认为1页
     page = parseInt(page == null ? 1 : page)

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../db/db');
-const genid = require('../db/genid');
+const db = require('../config/db');
+const genid = require('../config/genid');
 
 // 全部tag列表
 router.get('/list', (req, res) => {

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const {v4: uuidv4} = require('uuid')
-const db = require('../db/db');
+const db = require('../config/db');
 
 router.post('/login', (req, res) => {
     let {account, password} = req.body

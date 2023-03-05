@@ -126,10 +126,10 @@ router.get('/search', (req, res) => {
     // 默认为空字符串
     keyword = (keyword == null ? '' : keyword)
 
-
-    // 判断标签
     let params = []
     let whereSql = []
+    
+    // 判断标签
     if (tagId !== 0) {
         whereSql.push(' `tag_id` = ? ')
         params.push(tagId)

@@ -5,9 +5,8 @@ const genid = require('../config/genid');
 
 // 添加相机
 router.post("/add", (req, res) => {
-    let {name, brand, mount, frame, score, mega_pixel, price, release_year, img_path} = req.body
     let id = genid.NextId()
-    let params = {id, name, brand, mount, frame, score, mega_pixel, price, release_year, img_path}
+    let params = {...{id}, ...req.body}
 
     const insertSql = "INSERT INTO camera SET ?"
     db.query(insertSql, params, (err, results) => {
@@ -30,8 +29,10 @@ router.post("/add", (req, res) => {
 
 // 修改相机
 router.put("/update", (req, res) => {
-    let {id, name, brand, mount, frame, score, mega_pixel, price, release_year, img_path} = req.body
-    let params = {name, brand, mount, frame, score, mega_pixel, price, release_year, img_path}
+    let {id} = req.body
+    let params = req.body
+    // 删除 id 属性保持和 SET ? 需要的对象顺序一致
+    delete params.id
 
     const updateSql = "UPDATE `camera` SET ? WHERE `id` = " + id
     db.query(updateSql, params, (err, results) => {
@@ -80,9 +81,19 @@ router.delete("/delete", (req, res) => {
 // 查询相机
 router.get("/search", (req, res) => {
     let {keyword} = req.query
+    console.log(keyword);
 
-    let params = "%" + keyword + "%"
-    const searchSql = " SELECT * FROM camera WHERE `name` LIKE ? "
+    let params = []
+    let searchSql = " SELECT id, brand,`name`,mount,frame,w_pixel,score,price FROM camera "
+
+    // 如果没有关键词 查询全部相机
+    if (keyword !== "") {
+        searchSql += "WHERE `name` LIKE ?"
+        params.push("%" + keyword + "%")
+    }
+
+    console.log(searchSql)
+
     db.query(searchSql, params, (err, results) => {
         // 报错
         if (err) {
@@ -95,7 +106,7 @@ router.get("/search", (req, res) => {
         else {
             res.send({
                 code: 200,
-                msg: '搜索文章成功',
+                msg: '搜索相机成功',
                 keyword,
                 results
             })

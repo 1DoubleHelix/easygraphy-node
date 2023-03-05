@@ -5,7 +5,7 @@ const genid = require('../config/genid');
 
 // 添加镜头
 router.post("/add", (req, res) => {
-    let { name, brand, mount, frame, score, price, release_year, min_focal, max_focal, max_aperture, img_path } = req.body
+    let {name, brand, mount, frame, score, price, release_year, min_focal, max_focal, max_aperture, img_path} = req.body
     let id = genid.NextId()
     let params = {
         id,
@@ -116,10 +116,18 @@ router.delete("/delete", (req, res) => {
 
 // 查询镜头
 router.get("/search", (req, res) => {
-    let { keyword } = req.query
+    let {keyword} = req.query
+    // console.log(keyword);
 
-    let params = "%" + keyword + "%"
-    const searchSql = " SELECT * FROM lens WHERE `name` LIKE ? "
+    let params = []
+    let searchSql = " SELECT id, brand, `name`, mount, frame, min_focal, max_focal, max_aperture, price FROM lens "
+
+    // 如果没有关键词 查询全部镜头
+    if (keyword !== "") {
+        searchSql += "WHERE `name` LIKE ?"
+        params.push("%" + keyword + "%")
+    }
+
     db.query(searchSql, params, (err, results) => {
         // 报错
         if (err) {

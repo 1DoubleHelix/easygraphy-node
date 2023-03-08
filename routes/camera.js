@@ -3,10 +3,34 @@ const router = express.Router()
 const db = require('../config/db');
 const genid = require('../config/genid');
 
+// 获取单个相机数据
+router.get("/detail", (req, res) => {
+    let { id } = req.query
+    let selectSql = "SELECT * FROM camera WHERE id = ? "
+
+    db.query(selectSql, [id], (err, results) => {
+        // 报错
+        if (err) {
+            res.send({
+                code: 500,
+                msg: '获取相机信息失败'
+            })
+        }
+        // 成功
+        else {
+            res.send({
+                code: 200,
+                msg: '获取相机信息成功',
+                results: results[0]
+            })
+        }
+    })
+})
+
 // 添加相机
 router.post("/add", (req, res) => {
     let id = genid.NextId()
-    let params = {...{id}, ...req.body}
+    let params = { ...{ id }, ...req.body }
 
     const insertSql = "INSERT INTO camera SET ?"
     db.query(insertSql, params, (err, results) => {
@@ -29,7 +53,7 @@ router.post("/add", (req, res) => {
 
 // 修改相机
 router.put("/update", (req, res) => {
-    let {id} = req.body
+    let { id } = req.body
     let params = req.body
     // 删除 id 属性保持和 SET ? 需要的对象顺序一致
     delete params.id
@@ -80,7 +104,7 @@ router.delete("/delete", (req, res) => {
 
 // 查询相机
 router.get("/search", (req, res) => {
-    let {keyword} = req.query
+    let { keyword } = req.query
     console.log(keyword);
 
     let params = []
@@ -92,7 +116,7 @@ router.get("/search", (req, res) => {
         params.push("%" + keyword + "%")
     }
 
-    console.log(searchSql)
+    // console.log(searchSql)
 
     db.query(searchSql, params, (err, results) => {
         // 报错

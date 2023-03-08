@@ -24,10 +24,11 @@ app.use(upload.any());
 //指定静态资源路径
 app.use(express.static(path.join(__dirname, "public")))
 
-// 解析 token
+// 解析 token 中间件
 const jwtConfig = require("./config/jwt")
 const expressJWT = require('express-jwt')
 // 指定哪些接口不需要进行 Token 的身份认证
+// 解析出来的信息挂载到 req.user 上
 // app.use(expressJWT({secret: jwtConfig.jwtSecretKey}).unless({path: [/^\/api\//]}))
 
 

@@ -84,14 +84,18 @@ router.post("/login", (req, res) => {
             return;
         }
 
-        // 去除密码和图片名 生成 token
-        const user = {...results[0], password: '', img_path: ''}
-        const tokenStr = jwt.sign(user, jwtConfig.jwtSecretKey, {expiresIn: '10h'})
+        // 去除密码 生成token
+        const user = { ...results[0], password: '' }
+        const tokenStr = jwt.sign(user, jwtConfig.jwtSecretKey, { expiresIn: '10h' })
 
         res.send({
             code: 200,
             msg: "登录成功",
-            token: 'Bearer ' + tokenStr
+            id: results[0].id,
+            username: results[0].username,
+            nickname: results[0].nickname,
+            email: results[0].email,
+            token: 'Bearer ' + tokenStr,
         })
 
     })

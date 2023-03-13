@@ -3,30 +3,6 @@ const router = express.Router()
 const db = require('../config/db');
 const genid = require('../config/genid');
 
-// 获取单个相机数据
-router.get("/detail", (req, res) => {
-    let { id } = req.query
-    let selectSql = "SELECT * FROM camera WHERE id = ? "
-
-    db.query(selectSql, [id], (err, results) => {
-        // 报错
-        if (err) {
-            res.send({
-                code: 500,
-                msg: '获取相机信息失败'
-            })
-        }
-        // 成功
-        else {
-            res.send({
-                code: 200,
-                msg: '获取相机信息成功',
-                results: results[0]
-            })
-        }
-    })
-})
-
 // 添加相机
 router.post("/add", (req, res) => {
     let id = genid.NextId()
@@ -97,42 +73,6 @@ router.delete("/delete", (req, res) => {
             res.send({
                 code: 200,
                 msg: '删除相机成功'
-            })
-        }
-    })
-})
-
-// 查询相机
-router.get("/search", (req, res) => {
-    let { keyword } = req.query
-    console.log(keyword);
-
-    let params = []
-    let searchSql = " SELECT id, brand,`name`,mount,frame,w_pixel,score,price FROM camera "
-
-    // 如果没有关键词 查询全部相机
-    if (keyword !== "") {
-        searchSql += "WHERE `name` LIKE ?"
-        params.push("%" + keyword + "%")
-    }
-
-    // console.log(searchSql)
-
-    db.query(searchSql, params, (err, results) => {
-        // 报错
-        if (err) {
-            res.send({
-                code: 500,
-                msg: '搜索相机失败'
-            })
-        }
-        // 成功
-        else {
-            res.send({
-                code: 200,
-                msg: '搜索相机成功',
-                keyword,
-                results
             })
         }
     })

@@ -6,18 +6,10 @@
 2. Express
 3. MySql
 
-## 正在编写需求
+## 项目细节
 
-- token，直接判断，没有就直接return，后期再添加jwt支持
+router文件夹下
 
-## 已经完成需求
+根目录中的接口需要token认证，区分不同用户操作
 
-- 基本路由
-
-## 待完成需求
-
-教程实现token的方式不妥，后期再添加 JWT 支持
-
-## 教程进度
-
-https://www.bilibili.com/video/BV1t3411F7VH?t=2.1&p=20
+api中是无需token认证的接口，例如登录注册

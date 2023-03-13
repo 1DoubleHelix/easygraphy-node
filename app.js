@@ -27,22 +27,34 @@ app.use(express.static(path.join(__dirname, "public")))
 // 解析 token 中间件
 const jwtConfig = require("./config/jwt")
 const expressJWT = require('express-jwt')
-// 指定哪些接口不需要进行 Token 的身份认证
+// api开头的接口不需要进行token认证
 // 解析出来的信息挂载到 req.user 上
-// app.use(expressJWT({secret: jwtConfig.jwtSecretKey}).unless({path: [/^\/api\//]}))
+app.use(expressJWT({ secret: jwtConfig.jwtSecretKey }).unless({ path: [/^\/api\//] }))
 
 
 // 测试路由
 app.use('/test', require("./routes/testRouter"))
-// 以下是所有路由
+
+// 无需认证的接口
+app.use('/api/user', require('./routes/api/user'))
+app.use('/api/admin', require('./routes/api/admin'))
+app.use('/api/tag', require('./routes/api/tag'))
+app.use('/api/blog', require('./routes/api/blog'))
+app.use('/api/camera', require('./routes/api/camera'))
+app.use('/api/lens', require('./routes/api/lens'))
+app.use('/api/comment', require('./routes/api/comment'))
+app.use('/api/combine', require('./routes/api/combine'))
+
+
+// 需要认证的接口
 app.use('/admin', require('./routes/admin'))
 app.use('/tag', require('./routes/tag'))
 app.use('/blog', require('./routes/blog'))
 app.use('/upload', require('./routes/upload/richEditor'))
 app.use('/camera', require('./routes/camera'))
 app.use('/lens', require('./routes/lens'))
-app.use('/user', require('./routes/user'))
-
+app.use('/comment', require('./routes/comment'))
+app.use('/combine', require('./routes/combine'))
 
 // 错误中间件
 app.use(function (err, req, res, next) {
@@ -52,12 +64,14 @@ app.use(function (err, req, res, next) {
             code: 401,
             msg: "无效token"
         })
+        return
     }
 
     res.send({
         code: 500,
         msg: "服务器发生错误"
     })
+    console.log(err)
 })
 
 

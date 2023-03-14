@@ -49,12 +49,14 @@ router.post("/add", (req, res) => {
 
 // 删除组合
 router.delete("/delete", (req, res) => {
-    let { id } = req.query.id
+    let id = req.query.id
     const deleteCombineSql = 'DELETE FROM combine WHERE `id` = ?'
-    const deleteCombineLensSql = 'DELETE FROM combine_lens WHERE `id` = ?'
+    const deleteCombineLensSql = 'DELETE FROM combine_lens WHERE `combine_id` = ?'
+
     db.query(deleteCombineSql + ";" + deleteCombineLensSql, [id, id], (err, results) => {
         // 报错
         if (err) {
+            console.log(err);
             res.send({
                 code: 500,
                 msg: '删除组合失败'

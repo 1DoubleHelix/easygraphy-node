@@ -20,28 +20,28 @@ router.post("/add", (req, res) => {
     let createTime = new Date().getTime()
 
     let params = [id, userId, createTime, content]
-    let whereSql = []
+    let kindSql = []
 
     if (objectId !== 0 && kind !== '') {
         params.push(objectId)
         // 判断评论对象
         switch (kind) {
             case "blog":
-                whereSql.push(' blog_id ')
+                kindSql.push(' blog_id ')
                 break;
             case "combine":
-                whereSql.push(' combine_id ')
+                kindSql.push(' combine_id ')
                 break;
             case "camera":
-                whereSql.push(' camera_id ')
+                kindSql.push(' camera_id ')
                 break;
             case "lens":
-                whereSql.push(' lens_id ')
+                kindSql.push(' lens_id ')
                 break;
         }
     }
 
-    let insertSql = 'INSERT INTO `comment` ( id, user_id, create_time, content, ' + whereSql + ' ) VALUES (?, ?, ?, ?, ?)'
+    let insertSql = 'INSERT INTO `comment` ( id, user_id, create_time, content, ' + kindSql + ' ) VALUES (?, ?, ?, ?, ?)'
 
     db.query(insertSql, params, (err, results) => {
         if (err) {

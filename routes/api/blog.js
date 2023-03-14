@@ -124,6 +124,7 @@ router.get('/search', (req, res) => {
     pageSize = parseInt(pageSize == null ? 10 : pageSize)
     // 默认为0
     tagId = parseInt(tagId == null ? 0 : tagId)
+    userID = parseInt(userID == null ? 0 : userID)
     // 默认为空字符串
     keyword = (keyword == null ? '' : keyword)
 
@@ -137,7 +138,7 @@ router.get('/search', (req, res) => {
     }
 
     // 判断用户ID
-    if (userID != 0) {
+    if (userID !== 0) {
         whereSql.push(' `user_id` = ? ')
         params.push(userID)
     }
@@ -157,23 +158,16 @@ router.get('/search', (req, res) => {
     }
 
     // 拼接 Sql 查询分页
-    // let searchSql = ' SELECT * FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
     // 超长内容裁剪 取前50个字符
-    let searchSql = ' SELECT id, tag_id, title, LEFT(content,50) AS content, create_time FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
+    let searchSql = ' SELECT id, user_id, tag_id, title, LEFT(content,50) AS content, create_time FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
     let searchSqlParams = params.concat([(page - 1) * pageSize, pageSize])
 
     // 拼接 Sql 查询数据总数
-    // let countSql = ' SELECT count(*) FROM `blog` ' + whereSql2
     let countSql = ' SELECT count(*) AS `count` FROM `blog` ' + whereSql2
     let countSqlParams = params
 
     // 查询分页数据 多条 Sql 语句实现两次查询
-    // let searchResult = db.query(searchSql, searchSqlParams)
-    // let countResult = db.query(countSql, countSqlParams)
     db.query(searchSql + ';' + countSql, searchSqlParams.concat(countSqlParams), (err, results) => {
-
-        // console.log(searchSqlParams.concat(countSqlParams));
-        // console.log(err);
 
         // 报错
         if (err) {

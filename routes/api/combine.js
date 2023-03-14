@@ -72,11 +72,12 @@ router.get("/detail", (req, res) => {
 router.get("/search", (req, res) => {
     /**
      * keyword 关键词
+     * userID 用户ID
      * page 页码
      * pageSIze 分页大小
      */
 
-    let { keyword, page, pageSize } = req.query
+    let { keyword, userID, page, pageSize } = req.query
 
     // 默认为1页
     page = parseInt(page == null ? 1 : page)
@@ -84,6 +85,8 @@ router.get("/search", (req, res) => {
     pageSize = parseInt(pageSize == null ? 10 : pageSize)
     // 默认为空字符串
     keyword = (keyword == null ? '' : keyword)
+    // 默认为0
+    userID = parseInt(userID == null ? 0 : userID)
 
     let params = []
     let whereSql = []
@@ -93,6 +96,12 @@ router.get("/search", (req, res) => {
         whereSql.push(' (`title` LIKE ? OR `content` LIKE ?) ')
         params.push('%' + keyword + '%')
         params.push('%' + keyword + '%')
+    }
+
+    // 判断用户ID
+    if (userID !== 0) {
+        whereSql.push(' `user_id` = ? ')
+        params.push(userID)
     }
 
     // 拼接 where语句

@@ -12,8 +12,8 @@ router.get('/search', (req, res) => {
      * kind 评论的对象
      */
 
-        // 拿到前端数据先做判断
-    let {page, pageSize, id, kind} = req.query
+    // 拿到前端数据先做判断
+    let { page, pageSize, id, kind } = req.query
 
     // 默认为1页
     page = parseInt(page == null ? 1 : page)

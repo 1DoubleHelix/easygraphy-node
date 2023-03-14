@@ -14,6 +14,7 @@ router.get("/list", (req, res) => {
     // 通过token拿到用户id
     let userId = req.user.id
 
+
     // 默认为1页
     page = parseInt(page == null ? 1 : page)
     // 默认为10条
@@ -22,7 +23,7 @@ router.get("/list", (req, res) => {
     userId = parseInt(userId == null ? 0 : userId)
 
     let params = []
-    let kindSql = []
+    let selectSql = []
 
 
     if (userId !== 0 && kind !== '') {
@@ -30,27 +31,30 @@ router.get("/list", (req, res) => {
         // 判断评论对象
         switch (kind) {
             case "blog":
-                kindSql.push(' `blog_id` ')
+                selectSql.push(' SELECT favorite.id, favorite.blog_id, blog.title FROM favorite JOIN blog ON favorite.blog_id = blog.id WHERE favorite.user_id = ? AND favorite.blog_id ')
                 break;
             case "combine":
-                kindSql.push(' `combine_id` ')
+                selectSql.push(' SELECT favorite.id, favorite.combine_id, combine.title FROM favorite JOIN combine ON favorite.combine_id = combine.id WHERE favorite.user_id = ? AND favorite.combine_id ')
                 break;
             case "camera":
-                kindSql.push(' `camera_id` ')
+                selectSql.push(' SELECT favorite.id, favorite.camera_id, camera.`name` FROM favorite JOIN camera ON favorite.camera_id = camera.id WHERE favorite.user_id = ? AND favorite.camera_id ')
                 break;
             case "lens":
-                kindSql.push(' `lens_id` ')
+                selectSql.push(' SELECT favorite.id, favorite.lens_id, lens.brand, lens.`name` FROM favorite JOIN lens ON favorite.lens_id = lens.id WHERE favorite.user_id = ? AND favorite.lens_id ')
                 break;
         }
     }
 
     // 查询特定分页
-    let searchSql = " SELECT id, " + kindSql + " FROM `favorite` WHERE user_id = ? ORDER BY `id` DESC LIMIT ?, ? "
+    let searchSql = selectSql + " ORDER BY `id` DESC LIMIT ?, ? "
     let searchSqlParams = params.concat([(page - 1) * pageSize, pageSize])
 
     // 查询分页总数
-    let countSql = 'SELECT count(*) AS `count` FROM `favorite` WHERE user_id = ? AND ' + kindSql
+    let countSql = 'SELECT count(*) AS `count` FROM `favorite` WHERE user_id = ? AND ' + kind + '_id'
     let countSqlParams = params
+
+    console.log(searchSql + ';' + countSql);
+    console.log(searchSqlParams + ';' + countSqlParams);
 
     db.query(searchSql + ';' + countSql, searchSqlParams.concat(countSqlParams), (err, results) => {
         // 错误
@@ -75,9 +79,6 @@ router.get("/list", (req, res) => {
             })
         }
     })
-
-
-
 })
 
 // 添加收藏
@@ -136,7 +137,7 @@ router.post("/add", (req, res) => {
 
 // 取消收藏
 router.delete("/delete", (req, res) => {
-    let id = req.body.id
+    let id = req.query.id
 
     const deleteSql = ' DELETE FROM `favorite` WHERE id = ? '
 

@@ -37,7 +37,7 @@ router.get("/list", (req, res) => {
                 selectSql.push(' SELECT favorite.id, favorite.combine_id, combine.title FROM favorite JOIN combine ON favorite.combine_id = combine.id WHERE favorite.user_id = ? AND favorite.combine_id ')
                 break;
             case "camera":
-                selectSql.push(' SELECT favorite.id, favorite.camera_id, camera.`name` FROM favorite JOIN camera ON favorite.camera_id = camera.id WHERE favorite.user_id = ? AND favorite.camera_id ')
+                selectSql.push(' SELECT favorite.id, favorite.camera_id, camera.brand, camera.`name` FROM favorite JOIN camera ON favorite.camera_id = camera.id WHERE favorite.user_id = ? AND favorite.camera_id ')
                 break;
             case "lens":
                 selectSql.push(' SELECT favorite.id, favorite.lens_id, lens.brand, lens.`name` FROM favorite JOIN lens ON favorite.lens_id = lens.id WHERE favorite.user_id = ? AND favorite.lens_id ')
@@ -53,20 +53,14 @@ router.get("/list", (req, res) => {
     let countSql = 'SELECT count(*) AS `count` FROM `favorite` WHERE user_id = ? AND ' + kind + '_id'
     let countSqlParams = params
 
-    console.log(searchSql + ';' + countSql);
-    console.log(searchSqlParams + ';' + countSqlParams);
-
     db.query(searchSql + ';' + countSql, searchSqlParams.concat(countSqlParams), (err, results) => {
-        // 错误
         if (err) {
             console.log(err)
             res.send({
                 code: 500,
                 msg: '获取收藏失败'
             })
-        }
-        // 成功
-        else {
+        } else {
             res.send({
                 code: 200,
                 msg: '获取收藏成功',

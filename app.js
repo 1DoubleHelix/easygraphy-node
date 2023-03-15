@@ -44,6 +44,7 @@ app.use('/api/camera', require('./routes/api/camera'))
 app.use('/api/lens', require('./routes/api/lens'))
 app.use('/api/comment', require('./routes/api/comment'))
 app.use('/api/combine', require('./routes/api/combine'))
+// app.use('/api/favorite', require('./routes/favorite'))
 
 
 // 需要认证的接口

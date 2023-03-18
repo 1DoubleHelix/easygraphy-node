@@ -45,6 +45,7 @@ app.use('/api/lens', require('./routes/api/lens'))
 app.use('/api/comment', require('./routes/api/comment'))
 app.use('/api/combine', require('./routes/api/combine'))
 // app.use('/api/favorite', require('./routes/favorite'))
+app.use('/api/helper', require('./routes/helper'))
 
 
 // 需要认证的接口
@@ -57,6 +58,7 @@ app.use('/lens', require('./routes/lens'))
 app.use('/comment', require('./routes/comment'))
 app.use('/combine', require('./routes/combine'))
 app.use('/favorite', require('./routes/favorite'))
+// app.use('/helper', require('./routes/helper'))
 
 // 错误中间件
 app.use(function (err, req, res, next) {

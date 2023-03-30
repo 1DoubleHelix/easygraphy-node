@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../config/db');
-const genid = require('../config/genid');
+const db = require('../../config/db');
+const genid = require('../../config/genid');
 
 // 获取个人收藏夹 按分类
 router.get("/list", (req, res) => {
@@ -28,7 +28,7 @@ router.get("/list", (req, res) => {
 
     if (userId !== 0 && kind !== '') {
         params.push(userId)
-        // 判断评论对象
+        // 判断收藏对象
         switch (kind) {
             case "blog":
                 selectSql.push(' SELECT favorite.id, favorite.blog_id, blog.title FROM favorite JOIN blog ON favorite.blog_id = blog.id WHERE favorite.user_id = ? AND favorite.blog_id ')
@@ -123,7 +123,8 @@ router.post("/add", (req, res) => {
         else {
             res.send({
                 code: 200,
-                msg: '收藏成功'
+                msg: '收藏成功',
+                id
             })
         }
     })

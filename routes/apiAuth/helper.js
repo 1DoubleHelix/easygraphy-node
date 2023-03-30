@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../config/db');
-const genid = require('../config/genid');
+const db = require('../../config/db');
+const genid = require('../../config/genid');
 
 // 筛选相机
 router.get('/camera', (req, res) => {

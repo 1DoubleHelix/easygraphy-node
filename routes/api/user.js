@@ -34,8 +34,9 @@ router.post("/register", (req, res) => {
             return;
         }
 
-        // 加密密码 加盐 生成用户ID
+        // 加密密码 加盐
         userInfo.password = bcrypt.hashSync(userInfo.password, 10)
+        // 生成用户ID
         userInfo.id = genid.NextId()
         // 插入用户数据
         const insertSql = "INSERT INTO user SET ?"

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../config/db');
-const genid = require('../config/genid');
+const db = require('../../config/db');
+const genid = require('../../config/genid');
 
 // 添加博客
 router.post('/add', (req, res) => {
@@ -35,7 +35,7 @@ router.post('/add', (req, res) => {
 router.put('/update', (req, res) => {
     let { title, tagId, content, id } = req.body
 
-    // 这里要检验token中的id 用户只能修改自己的文章
+    // 这里要检验token中的id 用户只能修改自己的文章 管理员除外
 
     let params = [tagId, title, content, id]
     const updateSql = 'UPDATE `blog` SET `tag_id` = ?, `title` = ?, `content` = ? WHERE `id` = ?;'

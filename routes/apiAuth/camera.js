@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../config/db');
-const genid = require('../config/genid');
+const db = require('../../config/db');
+const genid = require('../../config/genid');
 
 // 添加相机
 router.post("/add", (req, res) => {
@@ -12,6 +12,7 @@ router.post("/add", (req, res) => {
     db.query(insertSql, params, (err, results) => {
         // 报错
         if (err) {
+            console.log(err);
             res.send({
                 code: 500,
                 msg: '添加相机失败'
@@ -38,6 +39,7 @@ router.put("/update", (req, res) => {
     db.query(updateSql, params, (err, results) => {
         // 报错
         if (err) {
+            console.log(err);
             res.send({
                 code: 500,
                 msg: '修改相机失败'

@@ -74,16 +74,10 @@ app.use(function (err, req, res, next) {
 
     res.send({
         code: 500,
-        msg: "服务器发生错误"
+        msg: "服务器错误"
     })
     console.log(err)
 })
-
-
-app.get("/", (req, res) => {
-    res.send("你好我是exp")
-})
-
 
 app.listen(8088, () => {
     console.log('启动成功 -> localhost:8088');

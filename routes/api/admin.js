@@ -1,37 +1,103 @@
 const express = require('express')
 const router = express.Router()
-const {v4: uuidv4} = require('uuid')
 const db = require('../../config/db');
+const genid = require('../../config/genid');
+const bcrypt = require('bcryptjs')
+const jwt = require("jsonwebtoken")
+const jwtConfig = require("../../config/jwt")
 
-router.post('/login', (req, res) => {
-    let {account, password} = req.body
-    db.query('SELECT * FROM admin WHERE account = ? AND PASSWORD = ?', [account, password], (err, results) => {
-        // 报错
-        if (!err && results.length === 0) {
+// 登录
+router.post("/login", (req, res) => {
+    const userInfo = req.body
+    const params = userInfo.username
+    const selectSql = "SELECT * FROM `admin` WHERE username = ?"
+    db.query(selectSql, params, (err, results) => {
+        if (err || results.length !== 1) {
+            console.log(err, "数据库有重名用户")
             res.send({
                 code: 500,
-                msg: '登录失败'
+                msg: '数据库有重名用户'
             })
+            return
         }
-        // 成功
-        else {
-            // 使用uuid生成token 写回数据库
-            let loginToken = uuidv4();
-            let updateTokenSql = 'UPDATE `admin` SET `token` = ? WHERE `id` = ?'
-            db.query(updateTokenSql, [loginToken, results[0].id])
 
-            // admin 信息发给前端 无password 带token
-            let admin_info = results[0]
-            admin_info.token = loginToken
-            admin_info.password = ''
-
+        // 验证密码
+        const checkPassword = bcrypt.compareSync(userInfo.password, results[0].password)
+        if (!checkPassword) {
             res.send({
-                code: 200,
-                msg: '登录成功',
-                data: admin_info,
+                code: 1,
+                msg: "密码错误"
             })
+            return;
         }
-    });
+
+        // 去除密码 生成token
+        const user = { ...results[0], password: '' }
+        const tokenStr = jwt.sign(user, jwtConfig.jwtSecretKey, { expiresIn: '10h' })
+
+        res.send({
+            code: 200,
+            msg: "登录成功",
+            id: results[0].id,
+            username: results[0].username,
+            token: 'Bearer ' + tokenStr,
+        })
+
+    })
+
+})
+
+// 注册管理员 内部接口
+router.post("/register", (req, res) => {
+    const userInfo = req.body
+    if (!userInfo.username || !userInfo.password) {
+        return res.send({
+            code: 1,
+            message: '用户名或密码不能为空'
+        })
+    }
+
+    const selectSql = " SELECT * FROM `admin` WHERE username = ? "
+    db.query(selectSql, userInfo.username, (err, results) => {
+        if (err) {
+            console.log(err);
+            res.send({
+                code: 1,
+                msg: 'Sql操作失败'
+            })
+            return;
+        }
+        if (results.length > 0) {
+            res.send({
+                code: 1,
+                msg: '用户名已存在'
+            })
+            return;
+        }
+
+        // 加密密码 加盐
+        userInfo.password = bcrypt.hashSync(userInfo.password, 10)
+        // 生成用户ID
+        userInfo.id = genid.NextId()
+        // 插入用户数据
+        const insertSql = "INSERT INTO admin SET ?"
+        db.query(insertSql, userInfo, (err, results) => {
+            if (err) {
+                console.log(err);
+                res.send({
+                    code: 500,
+                    msg: '注册失败'
+                })
+            }
+            // 成功
+            else {
+                res.send({
+                    code: 200,
+                    msg: '注册成功',
+                })
+            }
+        })
+    })
 })
 
 module.exports = router

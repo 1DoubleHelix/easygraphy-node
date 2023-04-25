@@ -42,6 +42,7 @@ router.post("/register", (req, res) => {
         const insertSql = "INSERT INTO user SET ?"
         db.query(insertSql, userInfo, (err, results) => {
             if (err) {
+                console.log(err);
                 res.send({
                     code: 1,
                     msg: '注册失败'
@@ -67,10 +68,10 @@ router.post("/login", (req, res) => {
     const selectSql = "SELECT * FROM `user` WHERE username = ?"
     db.query(selectSql, params, (err, results) => {
         if (err || results.length !== 1) {
-            console.log(err, "有同名用户")
+            console.log(err, "用户名已存在")
             res.send({
                 code: 500,
-                msg: '用户查找失败'
+                msg: '用户名已存在'
             })
             return
         }

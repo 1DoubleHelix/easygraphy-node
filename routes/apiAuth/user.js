@@ -1,10 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../../config/db');
-const genid = require('../../config/genid');
 const bcrypt = require('bcryptjs')
-const jwt = require("jsonwebtoken")
-const jwtConfig = require("../../config/jwt")
 
 // 获取单个用户信息
 router.get("/detail", (req, res) => {
@@ -106,10 +103,11 @@ router.get("/list", (req, res) => {
 
 // 修改用户信息
 router.put("/update", (req, res) => {
-    let { id, username, nickname, email, password } = req.body
+    let { nickname, email, password } = req.body
+    let id = req.user.id
 
     let setSql = ""
-    let params = [username, nickname, email]
+    let params = [nickname, email]
 
     // 判断密码是否为空 为空不修改
     if (password !== '') {
@@ -120,7 +118,7 @@ router.put("/update", (req, res) => {
     }
 
     params.push(id)
-    let updateSql = " UPDATE `user` SET `username` = ?, `nickname` = ?, `email` = ? " + setSql + " WHERE `id` = ? "
+    let updateSql = " UPDATE `user` SET `nickname` = ?, `email` = ? " + setSql + " WHERE `id` = ? "
 
     // 修改用户信息
     db.query(updateSql, params, (err, results) => {

@@ -3,6 +3,7 @@ const fs = require("fs");
 const router = express.Router
 
 router.post("/upload", (req, res) => {
+    console.log("上传文件");
     // 检查文件是否为空
     if (!req.file) {
         res.send({

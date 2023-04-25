@@ -26,83 +26,6 @@ router.get("/detail", (req, res) => {
     })
 })
 
-// 添加博客
-router.post('/add', (req, res) => {
-    let { title, tagId, content } = req.body
-    let id = genid.NextId()
-    let createTime = new Date().getTime()
-
-    let params = [id, tagId, title, content, createTime]
-    const insertSql = 'INSERT INTO `blog` (`id`, `tag_id`, `title`, `content`, `create_time`) VALUES (?, ?, ?, ?, ?);'
-    db.query(insertSql, params, (err, results) => {
-        // 报错
-        if (err) {
-            res.send({
-                code: 500,
-                msg: '添加文章失败'
-            })
-        }
-        // 成功
-        else {
-            res.send({
-                code: 200,
-                msg: '添加文章成功'
-            })
-        }
-    })
-})
-
-// 修改博客
-router.put('/update', (req, res) => {
-    let { title, tagId, content, id } = req.body
-
-    let params = [tagId, title, content, id]
-    const updateSql = 'UPDATE `blog` SET `tag_id` = ?, `title` = ?, `content` = ? WHERE `id` = ?;'
-    db.query(updateSql, params, (err, results) => {
-        // 报错
-        if (err) {
-            res.send({
-                code: 500,
-                msg: '修改文章失败'
-            })
-        }
-        // 成功
-        else {
-            res.send({
-                code: 200,
-                msg: '修改文章成功'
-            })
-        }
-    })
-})
-
-// 删除博客
-router.delete('/delete', (req, res) => {
-
-    // 查询tag是否已存在（待实现）
-
-    // 删除tag 使用 /blog/delete?id=xxx
-    let id = req.query.id
-
-    const deleteSql = 'DELETE FROM blog WHERE `id` = ?'
-    db.query(deleteSql, [id], (err, results) => {
-        // 报错
-        if (err) {
-            res.send({
-                code: 500,
-                msg: '删除文章失败'
-            })
-        }
-        // 成功
-        else {
-            res.send({
-                code: 200,
-                msg: '删除文章成功'
-            })
-        }
-    })
-})
-
 // 查询博客
 router.get('/search', (req, res) => {
     /**
@@ -159,7 +82,7 @@ router.get('/search', (req, res) => {
 
     // 拼接 Sql 查询分页
     // 超长内容裁剪 取前50个字符
-    let searchSql = ' SELECT id, user_id, tag_id, title, LEFT(content,50) AS content, create_time FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
+    let searchSql = ' SELECT b.id, b.user_id, u.nickname, b.tag_id, b.title, LEFT(b.content,50) AS content, b.create_time FROM `blog` b JOIN user u ON b.user_id = u.id ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
     let searchSqlParams = params.concat([(page - 1) * pageSize, pageSize])
 
     // 拼接 Sql 查询数据总数

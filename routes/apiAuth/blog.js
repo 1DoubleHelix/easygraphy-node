@@ -16,6 +16,7 @@ router.post('/add', (req, res) => {
     db.query(insertSql, params, (err, results) => {
         // 报错
         if (err) {
+            console.log(err);
             res.send({
                 code: 500,
                 msg: '添加文章失败'
@@ -60,9 +61,6 @@ router.put('/update', (req, res) => {
 // 删除博客
 router.delete('/delete', (req, res) => {
 
-    // 查询tag是否已存在（待实现）
-
-    // 删除tag 使用 /blog/delete?id=xxx
     let id = req.query.id
 
     const deleteSql = 'DELETE FROM blog WHERE `id` = ?'

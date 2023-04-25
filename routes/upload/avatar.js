@@ -2,7 +2,8 @@ const express = require('express')
 const fs = require("fs");
 const router = express.Router()
 
-router.post("/avatar", (req, res) => {
+router.post("/upload", (req, res) => {
+    console.log("上传头像");
     console.log(req.files);
     // 检查文件是否为空
     if (!req.files) {
@@ -13,7 +14,6 @@ router.post("/avatar", (req, res) => {
     } else {
         // 修改为用户ID
         let fileName = req.user.id + ".jpg"
-        // let fileName = "testImg.jpg"
         // 修改名字 移动文件
         fs.renameSync(
             process.cwd() + "/public/upload/temp/" + req.files[0].filename,

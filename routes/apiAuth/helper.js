@@ -14,6 +14,7 @@ router.get('/camera', (req, res) => {
     } else {
         selectSql += ' AND price < 25999 '
     }
+    selectSql += ' ORDER BY price '
 
 
     db.query(selectSql, [mount, frame], (err, data) => {
@@ -46,10 +47,13 @@ router.get('/lens', (req, res) => {
 
     // 如果选择预算不高 去除高价镜头
     if (budget == '3') {
-        selectSql += ' AND price > 1700 '
+        selectSql += ' AND price > 5400 '
+    } else if (budget == '2') {
+        selectSql += ' AND price < 50000 '
     } else {
-        selectSql += ' AND price < 20000 '
+        selectSql += ' AND price < 10000 '
     }
+    selectSql += ' ORDER BY brand DESC , min_focal DESC, price DESC '
 
     // 获取数据 在回调函数中用JavaScript处理
     db.query(selectSql, (err, data) => {

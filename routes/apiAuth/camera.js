@@ -65,6 +65,7 @@ router.delete("/delete", (req, res) => {
     db.query(deleteSql, [id], (err, results) => {
         // 报错
         if (err) {
+            console.log(err);
             res.send({
                 code: 500,
                 msg: '删除相机失败'

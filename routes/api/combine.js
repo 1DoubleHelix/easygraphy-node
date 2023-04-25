@@ -113,7 +113,7 @@ router.get("/search", (req, res) => {
 
     // 拼接 Sql 查询分页
     // 超长内容裁剪 取前50个字符
-    let searchSql = ' SELECT id, user_id, camera_id, title, LEFT(content,50) AS content, create_time FROM `combine` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
+    let searchSql = ' SELECT c.*, m.brand, m.name, u.nickname FROM `combine` c JOIN camera m ON c.camera_id = m.id JOIN user u ON c.user_id = u.id ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
     let searchSqlParams = params.concat([(page - 1) * pageSize, pageSize])
 
     // 拼接 Sql 查询数据总数

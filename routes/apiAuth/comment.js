@@ -13,35 +13,35 @@ router.post("/add", (req, res) => {
     生成时间
     生成评论id
      */
-    let {kind, objectId, content} = req.body
+    let { type, objectId, content } = req.body
     let id = genid.NextId()
     // 从token解析用户id
     let userId = req.user.id
     let createTime = new Date().getTime()
 
     let params = [id, userId, createTime, content]
-    let kindSql = []
+    let typeSql = []
 
-    if (objectId !== 0 && kind !== '') {
+    if (objectId !== 0 && type !== '') {
         params.push(objectId)
         // 判断评论对象
-        switch (kind) {
+        switch (type) {
             case "blog":
-                kindSql.push(' blog_id ')
+                typeSql.push(' blog_id ')
                 break;
             case "combine":
-                kindSql.push(' combine_id ')
+                typeSql.push(' combine_id ')
                 break;
             case "camera":
-                kindSql.push(' camera_id ')
+                typeSql.push(' camera_id ')
                 break;
             case "lens":
-                kindSql.push(' lens_id ')
+                typeSql.push(' lens_id ')
                 break;
         }
     }
 
-    let insertSql = 'INSERT INTO `comment` ( id, user_id, create_time, content, ' + kindSql + ' ) VALUES (?, ?, ?, ?, ?)'
+    let insertSql = 'INSERT INTO `comment` ( id, user_id, create_time, content, ' + typeSql + ' ) VALUES (?, ?, ?, ?, ?)'
 
     db.query(insertSql, params, (err, results) => {
         if (err) {

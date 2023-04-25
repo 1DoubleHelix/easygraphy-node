@@ -9,11 +9,11 @@ router.get('/search', (req, res) => {
      * page 页码
      * pageSize 分页大小
      * id 评论对象的ID 有4种 需要额外参数判断
-     * kind 评论的对象
+     * type 评论的对象
      */
 
     // 拿到前端数据先做判断
-    let { page, pageSize, id, kind } = req.query
+    let { page, pageSize, id, type } = req.query
 
     // 默认为1页
     page = parseInt(page == null ? 1 : page)
@@ -25,10 +25,10 @@ router.get('/search', (req, res) => {
     let params = []
     let whereSql = []
 
-    if (id !== 0 && kind !== '') {
+    if (id !== 0 && type !== '') {
         params.push(id)
         // 判断评论对象
-        switch (kind) {
+        switch (type) {
             case "blog":
                 whereSql.push(' WHERE `blog_id` = ? ')
                 break;

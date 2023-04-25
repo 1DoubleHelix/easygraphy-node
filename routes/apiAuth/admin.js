@@ -1,37 +1,42 @@
 const express = require('express')
 const router = express.Router()
-const {v4: uuidv4} = require('uuid')
 const db = require('../../config/db');
+const genid = require('../../config/genid');
+const bcrypt = require('bcryptjs')
 
-router.post('/login', (req, res) => {
-    let {account, password} = req.body
-    db.query('SELECT * FROM admin WHERE account = ? AND PASSWORD = ?', [account, password], (err, results) => {
-        // 报错
-        if (!err && results.length === 0) {
+// 管理员修改普通用户信息
+router.put("/update", (req, res) => {
+    let { id, username, nickname, email, password } = req.body
+
+    let setSql = ""
+    let params = [username, nickname, email]
+
+    // 判断密码是否为空 为空不修改
+    if (password !== '') {
+        // 加密
+        password = bcrypt.hashSync(password, 10)
+        setSql = ", `password` = ?"
+        params.push(password)
+    }
+
+    params.push(id)
+    let updateSql = " UPDATE `user` SET `username` = ?, `nickname` = ?, `email` = ? " + setSql + " WHERE `id` = ? "
+
+    // 修改用户信息
+    db.query(updateSql, params, (err, results) => {
+        if (err) {
             res.send({
                 code: 500,
-                msg: '登录失败'
+                msg: '修改用户失败'
             })
-        }
-        // 成功
-        else {
-            // 使用uuid生成token 写回数据库
-            let loginToken = uuidv4();
-            let updateTokenSql = 'UPDATE `admin` SET `token` = ? WHERE `id` = ?'
-            db.query(updateTokenSql, [loginToken, results[0].id])
-
-            // admin 信息发给前端 无password 带token
-            let admin_info = results[0]
-            admin_info.token = loginToken
-            admin_info.password = ''
-
+        } else {
             res.send({
                 code: 200,
-                msg: '登录成功',
-                data: admin_info,
+                msg: '修改用户成功'
             })
         }
-    });
+    })
+
 })
 
 module.exports = router

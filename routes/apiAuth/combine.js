@@ -7,6 +7,7 @@ const genid = require('../../config/genid');
 router.post("/add", (req, res) => {
     let id = genid.NextId()
     let { title, content, camera_id, lensGroup } = req.body
+    console.log(req.body);
 
     // 从token获取user_id
     let user_id = req.user.id
@@ -71,7 +72,5 @@ router.delete("/delete", (req, res) => {
         }
     })
 })
-
-// 修改组合 ??? 太难辣
 
 module.exports = router

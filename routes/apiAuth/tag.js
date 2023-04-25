@@ -8,12 +8,12 @@ router.delete('/delete', (req, res) => {
 
     // 查询tag是否已存在（待实现）
 
-    // 删除tag 使用 /tag/delete?id=xxx
     let id = req.query.id
     const deleteSql = 'DELETE FROM tag WHERE `id` = ?'
     db.query(deleteSql, [id], (err, results) => {
         // 报错
         if (err) {
+            console.log(err);
             res.send({
                 code: 500,
                 msg: '删除tag失败'
@@ -57,7 +57,7 @@ router.put('/update', (req, res) => {
     // 查询tag是否已存在 （待实现）
 
     // 修改tag
-    let {id, name} = req.body
+    let { id, name } = req.body
     const updateSql = 'UPDATE `tag` SET `name` = ? WHERE `id` = ?'
     db.query(updateSql, [name, id], (err, results) => {
         // 报错
@@ -83,7 +83,7 @@ router.post('/add', (req, res) => {
     // 查询tag是否已存在 （待实现）
 
     // 新增tag
-    let {name} = req.body
+    let { name } = req.body
     const insertSql = 'INSERT INTO `tag` (`id`, `name`) VALUES (?, ?)'
     db.query(insertSql, [genid.NextId(), name], (err, results) => {
         // 报错

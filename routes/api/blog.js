@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../config/db');
-const genid = require('../config/genid');
+const db = require('../../config/db');
+const genid = require('../../config/genid');
 
 // 获取单篇文章
 router.get("/detail", (req, res) => {
@@ -110,10 +110,11 @@ router.get('/search', (req, res) => {
      * tagId 编号
      * page 页码
      * pageSize 分页大小
+     * userID 用户ID
      * */
 
     // 拿到前端数据先做判断
-    let { keyword, tagId, page, pageSize } = req.query
+    let { keyword, tagId, page, pageSize, userID } = req.query
 
     // GET 方式接收为字符串 数字需要转换为Int 否则数据库查询出错
 
@@ -123,16 +124,23 @@ router.get('/search', (req, res) => {
     pageSize = parseInt(pageSize == null ? 10 : pageSize)
     // 默认为0
     tagId = parseInt(tagId == null ? 0 : tagId)
+    userID = parseInt(userID == null ? 0 : userID)
     // 默认为空字符串
     keyword = (keyword == null ? '' : keyword)
 
-
-    // 判断标签
     let params = []
     let whereSql = []
+
+    // 判断标签
     if (tagId !== 0) {
         whereSql.push(' `tag_id` = ? ')
         params.push(tagId)
+    }
+
+    // 判断用户ID
+    if (userID !== 0) {
+        whereSql.push(' `user_id` = ? ')
+        params.push(userID)
     }
 
     // 判断标题
@@ -145,28 +153,21 @@ router.get('/search', (req, res) => {
     // 拼接 where语句
     let whereSql2 = ''
     if (whereSql.length > 0) {
-        // 如果 whereSql 有值 拼接时加 AND
+        // 如果 whereSql 有值 拼接时在每个语句中间加 AND
         whereSql2 = 'WHERE' + whereSql.join(' AND ')
     }
 
     // 拼接 Sql 查询分页
-    // let searchSql = ' SELECT * FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
     // 超长内容裁剪 取前50个字符
-    let searchSql = ' SELECT id, tag_id, title, LEFT(content,50) AS content, create_time FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
+    let searchSql = ' SELECT id, user_id, tag_id, title, LEFT(content,50) AS content, create_time FROM `blog` ' + whereSql2 + ' ORDER BY `create_time` DESC LIMIT ?, ? '
     let searchSqlParams = params.concat([(page - 1) * pageSize, pageSize])
 
     // 拼接 Sql 查询数据总数
-    // let searchCountSql = ' SELECT count(*) FROM `blog` ' + whereSql2
-    let searchCountSql = ' SELECT count(*) AS `count` FROM `blog` ' + whereSql2
-    let searchCountSqlParams = params
+    let countSql = ' SELECT count(*) AS `count` FROM `blog` ' + whereSql2
+    let countSqlParams = params
 
     // 查询分页数据 多条 Sql 语句实现两次查询
-    // let searchResult = db.query(searchSql, searchSqlParams)
-    // let countResult = db.query(searchCountSql, searchCountSqlParams)
-    db.query(searchSql + ';' + searchCountSql, searchSqlParams.concat(searchCountSqlParams), (err, results) => {
-
-        // console.log(searchSqlParams.concat(searchCountSqlParams));
-        // console.log(err);
+    db.query(searchSql + ';' + countSql, searchSqlParams.concat(countSqlParams), (err, results) => {
 
         // 报错
         if (err) {

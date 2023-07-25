@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../config/db');
-const genid = require('../config/genid');
+const db = require('../../config/db');
+const genid = require('../../config/genid');
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
-const jwtConfig = require("../config/jwt")
+const jwtConfig = require("../../config/jwt")
 
 
 // 注册
@@ -34,8 +34,9 @@ router.post("/register", (req, res) => {
             return;
         }
 
-        // 加密密码 加盐 生成用户ID
+        // 加密密码 加盐
         userInfo.password = bcrypt.hashSync(userInfo.password, 10)
+        // 生成用户ID
         userInfo.id = genid.NextId()
         // 插入用户数据
         const insertSql = "INSERT INTO user SET ?"
@@ -69,7 +70,7 @@ router.post("/login", (req, res) => {
             console.log(err, "有同名用户")
             res.send({
                 code: 500,
-                msg: '查询用户失败'
+                msg: '用户查找失败'
             })
             return
         }
@@ -84,21 +85,22 @@ router.post("/login", (req, res) => {
             return;
         }
 
-        // 去除密码和图片名 生成 token
-        const user = {...results[0], password: '', img_path: ''}
-        const tokenStr = jwt.sign(user, jwtConfig.jwtSecretKey, {expiresIn: '10h'})
+        // 去除密码 生成token
+        const user = { ...results[0], password: '' }
+        const tokenStr = jwt.sign(user, jwtConfig.jwtSecretKey, { expiresIn: '10h' })
 
         res.send({
             code: 200,
             msg: "登录成功",
-            token: 'Bearer ' + tokenStr
+            id: results[0].id,
+            username: results[0].username,
+            nickname: results[0].nickname,
+            email: results[0].email,
+            token: 'Bearer ' + tokenStr,
         })
 
     })
 
 })
-
-
-// token
 
 module.exports = router
